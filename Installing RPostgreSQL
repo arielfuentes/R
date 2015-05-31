@@ -1,0 +1,3 @@
+#to instal the package "RPostgreSQL" in the system we need the file "libpq-fe.h", for that we need to go to the 
+##Ubuntu Software Center and install the "Header files for libpq5(PostgreSQL library)". And after that, you can install
+##it as you'd usually do in R.
