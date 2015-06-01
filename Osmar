@@ -1,0 +1,7 @@
+#The osmar package has the following dependencies:
+-XML
+-RCurl
+-bitops
+-geosphere
+-sp
+I had some problems with XML and Curl, for that, I made some files explaining hot to precede.
