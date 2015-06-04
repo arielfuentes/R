@@ -1,0 +1,6 @@
+#To install this package, you can do it as usual, but you need to setup some things first
+#Go to the terminal and type:
+sudo apt-get install libgdal-dev
+sudo apt-get install libproj-dev
+#And now you are ready to come back to R and type:
+install.packages("rgdal")
