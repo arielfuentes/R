@@ -7,6 +7,8 @@ library(dplyr)
 library(ggplot2)
 library(ggmap)
 library(spatstat)
+library(maptools)
+library(rgdal)
 
 m <- dbDriver("PostgreSQL")
 con <- dbConnect(m, host = "localhost", user= "postgres", password="admin", 
@@ -45,9 +47,27 @@ summary(point.sp)
 plot(point.sp, axes = 1)
 p <- ggplot(point.sp@data, aes(count, zona_subida))
 p + geom_point()
-point.pp <- as(point.sp, "ppp")
-K <- Kest(point.pp)
-plot(K)
-plot(density(point.pp, 100))
-contour(density(point.pp, 100))
-hist(point.pp$x)
+point.sp2 <- fortify(Izonedf)
+map <- ggplot(Izonedf, aes(x_subida, y_subida)) +
+  geom_point() +
+  coord_equal() +
+  labs(x = "Este (m)", y = "Norte (m)",
+  fill = count) +
+  ggtitle("Zona 772")
+# ggsave("large_plot.png", scale = 3, dpi = 400)
+box <- point.sp
+a <- as.data.frame(box@coords[,1:2])
+rownames(a) <- NULL
+box@coords <- as.matrix(a)
+res <- spTransform(box, CRS("+proj=longlat +datum=WGS84"))
+res2 <- bbox(res)
+res2[1, ] <- (res2[1, ] - mean(res2[1, ])) * 1.05 + mean(res2[1, ])
+res2[2, ] <- (res2[2, ] - mean(res2[2, ])) * 1.05 + mean(res2[2, ])
+point.sp.box <- ggmap(get_map(location = res2))
+# scale longitude and latitude (increase bb by 5% for plot)
+# point.pp <- as(point.sp, "ppp")
+# K <- Kest(point.pp)
+# plot(K)
+# plot(density(point.pp, 100))
+# contour(density(point.pp, 100))
+# hist(point.pp$x)
