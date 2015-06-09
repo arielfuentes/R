@@ -43,27 +43,33 @@ for(n in 2:length(Izone_wkt2$ID)){
 }
 ptm2 <- proc.time() - ptm
 proj4string(obj = point.sp) <- CRS("+init=epsg:32719")
+point.sp.bbox <- as.data.frame(box@coords)
+point.sp@coords <- as.matrix(point.sp.bbox)
+point.sp <- spTransform(point.sp, CRS("+proj=longlat +datum=WGS84"))
 summary(point.sp)
 plot(point.sp, axes = 1)
-p <- ggplot(point.sp@data, aes(count, zona_subida))
-p + geom_point()
-point.sp2 <- fortify(Izonedf)
-map <- ggplot(Izonedf, aes(x_subida, y_subida)) +
+# p <- ggplot(point.sp@data, aes(count, zona_subida))
+# p + geom_point()
+point.sp2 <- cbind(point.sp@coords, point.sp@data)
+map <- ggplot(point.sp2, aes(x, y)) +
   geom_point() +
   coord_equal() +
   labs(x = "Este (m)", y = "Norte (m)",
   fill = count) +
   ggtitle("Zona 772")
+map
 # ggsave("large_plot.png", scale = 3, dpi = 400)
-box <- point.sp
-a <- as.data.frame(box@coords[,1:2])
-rownames(a) <- NULL
-box@coords <- as.matrix(a)
-res <- spTransform(box, CRS("+proj=longlat +datum=WGS84"))
-res2 <- bbox(res)
-res2[1, ] <- (res2[1, ] - mean(res2[1, ])) * 1.05 + mean(res2[1, ])
-res2[2, ] <- (res2[2, ] - mean(res2[2, ])) * 1.05 + mean(res2[2, ])
-point.sp.box <- ggmap(get_map(location = res2))
+# box <- point.sp
+# a <- as.data.frame(box@coords[,1:2])
+# rownames(a) <- NULL
+# box@coords <- as.matrix(a)
+# res <- spTransform(box, CRS("+proj=longlat +datum=WGS84"))
+res2 <- bbox(point.sp)
+res2[1, ] <- (res2[1, ] - mean(res2[1, ])) * 1.3 + mean(res2[1, ])
+res2[2, ] <- (res2[2, ] - mean(res2[2, ])) * 1.3 + mean(res2[2, ])
+point.sp.loc <- ggmap(get_map(location = res2), source = "stamen", maptype = "toner", crop = T)
+point.sp.loc +
+  geom_point(data = point.sp2, aes(x = x, y = y))
 # scale longitude and latitude (increase bb by 5% for plot)
 # point.pp <- as(point.sp, "ppp")
 # K <- Kest(point.pp)
