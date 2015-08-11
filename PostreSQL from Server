@@ -2,3 +2,5 @@ library(RPostgreSQL)
 m <- dbDriver("PostgreSQL")
 con <- dbConnect(m, dbname="socioecon", host="10.100.100.10", port= "5432", user="postgres",
                  password="mypassword")
+# Close PostgreSQL connection 
+  dbDisconnect(con)
