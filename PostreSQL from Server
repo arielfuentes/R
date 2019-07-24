@@ -4,3 +4,12 @@ con <- dbConnect(m, dbname="socioecon", host="10.100.100.10", port= "5432", user
                  password="mypassword")
 # Close PostgreSQL connection 
   dbDisconnect(con)
+  #############################
+  con <- DBI::dbConnect(RPostgres::Postgres(),
+                      host = "localhost",
+                      dbname = "viajesBip!",
+                      user = "postgres",
+                      password = rstudioapi::askForPassword("viajesBip!"), 
+                      port = "5433")
+DBI::dbGetQuery(con, "select count(distinct(date(tiemposubida))) 
+  from viajes2019_abr where tipodia = 'LABORAL'")
